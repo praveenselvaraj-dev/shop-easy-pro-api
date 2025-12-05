@@ -1,0 +1,76 @@
+version: "3.9"
+
+services:
+
+  gateway:
+    build: ./gateway
+    container_name: api_gateway
+    ports:
+      - "8000:8000"
+    environment:
+      JWT_SECRET: supersecret
+    depends_on:
+      - user_service
+      - product_service
+    networks:
+      - backend
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - gateway
+    networks:
+      - backend
+
+  user_service:
+    build: ./user_service
+    container_name: user_service
+    environment:
+      JWT_SECRET: supersecret123
+      DB_HOST: db
+      DB_NAME: mydb
+      DB_USER: postgres
+      DB_PASS: password
+    depends_on:
+      - db
+    networks:
+      - backend
+
+  product_service:
+    build: ./product_service
+    container_name: product_service
+    environment:
+      JWT_SECRET: supersecret123
+      DB_HOST: db
+      DB_NAME: mydb
+      DB_USER: postgres
+      DB_PASS: password
+    depends_on:
+      - db
+    networks:
+      - backend
+
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+
+networks:
+  backend:
+
+volumes:
+  pgdata:
