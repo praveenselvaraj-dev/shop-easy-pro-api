@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import asc, desc
-from infrastructure.database.product_model import ProductTable
-from domain.interface.product_repository import ProductRepository
+from src.infrastructure.database.product_model import ProductTable
+from src.domain.interface.product_repository import ProductRepository
 import shutil
 import uuid
 from pathlib import Path

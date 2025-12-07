@@ -1,15 +1,15 @@
 from fastapi import APIRouter, Depends, UploadFile, File, Form, Query
 from typing import Optional, List
-from domain.services.product_service import ProductService
-from infrastructure.repositories.product_repository_Impl import ProductRepositoryImpl
-from infrastructure.database.connection import get_db
+from src.domain.services.product_service import ProductService
+from src.infrastructure.repositories.product_repository_Impl import ProductRepositoryImpl
+from src.infrastructure.database.connection import get_db
 from common_auth.dependencies import get_current_user
 from src.utils.exceptions import (
     ProductNotFoundError,
     UnauthorizedError,
     InsufficientStockError
 )
-from api.schemas.product_schema import ProductCreateRequest, ProductUpdateRequest, ProductResponse, PaginatedProductResponse
+from src.api.schemas.product_schema import ProductCreateRequest, ProductUpdateRequest, ProductResponse, PaginatedProductResponse
 
 router = APIRouter()
 

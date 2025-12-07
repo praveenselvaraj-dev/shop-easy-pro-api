@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query
-from infrastructure.repositories.product_repository_Impl import ProductRepositoryImpl
-from infrastructure.database.connection import get_db
+from src.infrastructure.repositories.product_repository_Impl import ProductRepositoryImpl
+from src.infrastructure.database.connection import get_db
 from src.api.schemas.product_admin_schema import ProductApproveRequest
 from common_auth.dependencies import get_current_user
 from src.utils.exceptions import UnauthorizedError, ProductNotFoundError
