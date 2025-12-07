@@ -8,14 +8,11 @@ settings = get_settings()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hash_password(password: str) -> str:
-    """
-    Hashes a password safely, truncating to 72 bytes if necessary.
-    """
     if not isinstance(password, str):
         raise TypeError("Password must be a string")
-    
-    safe_password = password[:72]  # bcrypt limit
+    safe_password = password[:72]  # truncate if somehow longer
     return pwd_context.hash(safe_password)
+
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
