@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from .jwt_utils import decode_token
+from src.common_auth.common_auth.jwt_utils import decode_token
 from fastapi import Header
 
 security = HTTPBearer()   
