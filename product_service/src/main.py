@@ -1,8 +1,8 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
+ROOT_DIR = Path(__file__).resolve().parents[2]   # <-- very important
+sys.path.append(str(ROOT_DIR))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
