@@ -3,7 +3,7 @@ from functools import lru_cache
 
 class Settings(BaseSettings):
  
-    DATABASE_URL: str = "postgresql+psycopg2://postgres:admin123@localhost:5432/postgres"
+    DATABASE_URL: str
     
     JWT_SECRET_KEY: str = "supersecret123"
     JWT_ALGORITHM: str = "HS256"
