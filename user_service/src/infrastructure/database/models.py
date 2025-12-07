@@ -11,6 +11,7 @@ class UserRole(str, enum.Enum):
 class UserModel(Base):
     """SQLAlchemy User Model"""
     __tablename__ = "users"
+    __table_args__ = {"extend_existing": True}  # ✅ add this
     id = Column(Integer, primary_key=True)
     username = Column(String(100), unique=True, index=True, nullable=False)  
     email = Column(String(255), unique=True, index=True, nullable=False)     
