@@ -8,6 +8,6 @@ psycopg2-binary
 redis
 passlib[bcrypt]==1.7.4
 bcrypt>=4.0.1,<5
-python-jose
+python-jose[cryptography]
 requests
 pydantic[email]

@@ -1,9 +1,8 @@
-# common_auth/jwt_utils.py
 import os
 from datetime import datetime, timedelta
 from typing import Dict, Any
 
-import jwt  
+from jose import jwt
 
 SECRET_KEY = os.getenv("JWT_SECRET", "supersecret123")
 ALGORITHM = os.getenv("JWT_ALGO", "HS256")
