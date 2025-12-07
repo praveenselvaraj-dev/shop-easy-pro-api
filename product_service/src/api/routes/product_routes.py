@@ -3,7 +3,7 @@ from typing import Optional, List
 from src.domain.services.product_service import ProductService
 from src.infrastructure.repositories.product_repository_Impl import ProductRepositoryImpl
 from src.infrastructure.database.connection import get_db
-from common_auth.dependencies import get_current_user
+from src.common_auth.common_auth.dependencies import get_current_user
 from src.utils.exceptions import (
     ProductNotFoundError,
     UnauthorizedError,
