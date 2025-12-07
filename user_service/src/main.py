@@ -41,7 +41,7 @@ app.add_middleware(CorrelationIdMiddleware)
 app.add_middleware(RateLimitMiddleware, max_requests=100, window_seconds=60)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["https://shop-easy-pro.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
