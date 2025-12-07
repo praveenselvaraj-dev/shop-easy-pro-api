@@ -1,9 +1,7 @@
 import sys
 from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).parent))
-
-
+ROOT_DIR = Path(__file__).resolve().parents[2] 
+sys.path.append(str(ROOT_DIR))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -42,7 +40,7 @@ app.add_middleware(RateLimitMiddleware, max_requests=100, window_seconds=60)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"], 
+    allow_origins=["https://shop-easy-pro.vercel.app"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

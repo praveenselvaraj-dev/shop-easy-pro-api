@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, Text
 from datetime import datetime
-from .connection import Base
+from src.infrastructure.database.connection import Base
 
 class AuditLog(Base):
     __tablename__ = "audit_logs"
