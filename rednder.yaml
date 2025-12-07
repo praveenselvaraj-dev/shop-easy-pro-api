@@ -1,0 +1,35 @@
+services:
+  - name: user-service
+    type: web
+    env: python
+    rootDir: user_service
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn src.main:app --host 0.0.0.0 --port $PORT"
+
+  - name: product-service
+    type: web
+    env: python
+    rootDir: product_service
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn src.main:app --host 0.0.0.0 --port $PORT"
+
+  - name: cart-service
+    type: web
+    env: python
+    rootDir: cart_service
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn src.main:app --host 0.0.0.0 --port $PORT"
+
+  - name: order-service
+    type: web
+    env: python
+    rootDir: order_service
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn src.main:app --host 0.0.0.0 --port $PORT"
+
+  - name: admin-service
+    type: web
+    env: python
+    rootDir: admin_service
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn src.main:app --host 0.0.0.0 --port $PORT"
