@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
-from common_auth.dependencies import  admin_required, get_current_user, get_raw_token
+from src.common_auth.common_auth.dependencies import  admin_required, get_current_user, get_raw_token
 from src.api.dependencies import get_admin_service
 from src.api.schemas.admin_schema import SalesSummary, LowStockItem, PagedOrders, OrderResponse, ApproveRequest, AuditLogResponse
 
