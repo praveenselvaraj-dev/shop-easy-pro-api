@@ -1,6 +1,6 @@
 import requests
-from domain.interface.cart_repository import CartRepository
-from utils.exceptions import NotEnoughStockError, ProductNotFoundError, CartItemNotFoundError
+from src.domain.interface.cart_repository import CartRepository
+from src.utils.exceptions import NotEnoughStockError, ProductNotFoundError, CartItemNotFoundError
 from fastapi import HTTPException
 
 PRODUCT_SERVICE_URL = "http://127.0.0.1:8001/api/v1/Product"

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from infrastructure.database.cart_model import CartItem
-from domain.interface.cart_repository import CartRepository
+from src.infrastructure.database.cart_model import CartItem
+from src.domain.interface.cart_repository import CartRepository
 
 class CartRepositoryImpl(CartRepository):
 
