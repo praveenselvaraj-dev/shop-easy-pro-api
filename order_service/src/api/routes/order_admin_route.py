@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from fastapi import Query
-from infrastructure.database.connection import get_db
-from infrastructure.repositories.order_repository_Impl import OrderRepositoryImpl
-from common_auth.dependencies import get_current_user
+from src.infrastructure.database.connection import get_db
+from src.infrastructure.repositories.order_repository_Impl import OrderRepositoryImpl
+from src.common_auth.common_auth.dependencies import get_current_user
 from datetime import datetime
 from src.utils.exceptions import ForbiddenError, InvalidRequestError
 

@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
-from api.schemas.order_schema import OrderResponse
-from domain.services.order_service import OrderService
-from infrastructure.repositories.order_repository_Impl import OrderRepositoryImpl
-from infrastructure.database.connection import get_db
-from common_auth.dependencies import get_current_user, get_raw_token
+
+from src.api.schemas.order_schema import OrderResponse
+from src.domain.services.order_service import OrderService
+from src.infrastructure.repositories.order_repository_Impl import OrderRepositoryImpl
+from src.infrastructure.database.connection import get_db
+from src.common_auth.common_auth.dependencies import get_current_user, get_raw_token
 
 router = APIRouter()
 

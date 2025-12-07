@@ -1,7 +1,8 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+ROOT_DIR = Path(__file__).resolve().parents[2] 
+sys.path.append(str(ROOT_DIR))
 
 
 from fastapi import FastAPI
@@ -19,7 +20,7 @@ logger = setup_logger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Creating database tables...")
-    Base.metadata.create_all(bind=engine)
+    # Base.metadata.create_all(bind=engine)
     logger.info("Order Service started successfully")
     yield
     logger.info("Shutting down Order Service...")

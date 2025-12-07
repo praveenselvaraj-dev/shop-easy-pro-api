@@ -1,8 +1,8 @@
 import uuid
 import requests
 from datetime import datetime
-from domain.interface.order_repository import OrderRepository
-from infrastructure.database.order_model import Order, OrderItem, OrderStatus
+from src.domain.interface.order_repository import OrderRepository
+from src.infrastructure.database.order_model import Order, OrderItem, OrderStatus
 
 CART_SERVICE_URL = "http://localhost:8002/api/v1/Cart"
 PRODUCT_SERVICE_URL = "http://localhost:8001/api/v1/Product"
