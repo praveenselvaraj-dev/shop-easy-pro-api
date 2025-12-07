@@ -8,12 +8,21 @@ settings = get_settings()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hash_password(password: str) -> str:
-    if len(password.encode('utf-8')) > 72:
-        raise ValueError("Password is too long (max 72 bytes)")
-    return pwd_context.hash(password)
+    """
+    Hashes a password safely, truncating to 72 bytes if necessary.
+    """
+    if not isinstance(password, str):
+        raise TypeError("Password must be a string")
+    
+    safe_password = password[:72]  # bcrypt limit
+    return pwd_context.hash(safe_password)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    """
+    Verify a password against a hash (also truncates to 72 bytes).
+    """
+    safe_password = plain_password[:72]
+    return pwd_context.verify(safe_password, hashed_password)
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
    
