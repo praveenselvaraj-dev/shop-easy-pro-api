@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from src.infrastructure.database.Audit_log import AuditLog
 from src.utils.utils import safe_json
 
-USER_SERVICE = os.getenv("USER_SERVICE_URL", "http://127.0.0.1:8000/api/v1/User")
-PRODUCT_SERVICE = os.getenv("PRODUCT_SERVICE_URL", "http://127.0.0.1:8001/api/v1/admin/Product")
-ORDER_SERVICE = os.getenv("ORDER_SERVICE_URL", "http://127.0.0.1:8003/api/v1/admin/Order")
+USER_SERVICE = os.getenv("USER_SERVICE_URL", "https://shop-easy-pro-api.onrender.com/api/v1/User")
+PRODUCT_SERVICE = os.getenv("PRODUCT_SERVICE_URL", "https://shop-easy-pro-api-product.onrender.com/api/v1/admin/Product")
+ORDER_SERVICE = os.getenv("ORDER_SERVICE_URL", "https://shop-easy-pro-api-order.onrender.com/api/v1/admin/Order")
 
 TIMEOUT = 5 
 

@@ -3,7 +3,7 @@ from src.domain.interface.cart_repository import CartRepository
 from src.utils.exceptions import NotEnoughStockError, ProductNotFoundError, CartItemNotFoundError
 from fastapi import HTTPException
 
-PRODUCT_SERVICE_URL = "http://127.0.0.1:8001/api/v1/Product"
+PRODUCT_SERVICE_URL = "https://shop-easy-pro-api-product.onrender.com/api/v1/Product"
 
 
 class CartService:

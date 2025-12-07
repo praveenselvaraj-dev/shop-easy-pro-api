@@ -4,8 +4,8 @@ from datetime import datetime
 from src.domain.interface.order_repository import OrderRepository
 from src.infrastructure.database.order_model import Order, OrderItem, OrderStatus
 
-CART_SERVICE_URL = "http://localhost:8002/api/v1/Cart"
-PRODUCT_SERVICE_URL = "http://localhost:8001/api/v1/Product"
+CART_SERVICE_URL = "https://shop-easy-pro-api-cart.onrender.com/api/v1/Cart"
+PRODUCT_SERVICE_URL = "https://shop-easy-pro-api-product.onrender.com/api/v1/Product"
 
 class OrderService:
 
