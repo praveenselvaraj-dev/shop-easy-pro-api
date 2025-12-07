@@ -23,7 +23,7 @@ logger = setup_logger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Creating database tables...")
-    Base.metadata.create_all(bind=engine)  # Tables now get created
+    # Base.metadata.create_all(bind=engine)  # Tables now get created
     logger.info("User Service started successfully")
     yield
     logger.info("Shutting down User Service...")
