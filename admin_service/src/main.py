@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 
-# Add the src directory to Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
 
@@ -12,6 +11,9 @@ from contextlib import asynccontextmanager
 from src.infrastructure.database.connection import engine, Base
 from src.api.routes import admin_route
 from src.utils.logger import setup_logger
+from src.utils.middleware.correlation import CorrelationIdMiddleware
+from src.utils.middleware.exception import ExceptionMiddleware
+from src.utils.middleware.rate_limiter import RateLimitMiddleware
 
 logger = setup_logger(__name__)
 
@@ -34,16 +36,18 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS Middleware
+app.add_middleware(ExceptionMiddleware)
+app.add_middleware(CorrelationIdMiddleware)
+app.add_middleware(RateLimitMiddleware, max_requests=100, window_seconds=60)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # React frontend
+    allow_origins=["http://localhost:5173"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include Routers
 app.include_router(admin_route.router, prefix="/api/v1/admin")
 # @app.get("/health")
 # def health_check():

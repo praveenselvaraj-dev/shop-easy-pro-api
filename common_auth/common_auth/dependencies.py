@@ -1,6 +1,7 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from .jwt_utils import decode_token
+from fastapi import Header
 
 security = HTTPBearer()   
 
@@ -13,7 +14,6 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         if str(e) == "token_expired":
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-from fastapi import Header
 
 def get_raw_token(authorization: str = Header(None)):
     if authorization and authorization.startswith("Bearer "):

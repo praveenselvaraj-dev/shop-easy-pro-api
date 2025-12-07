@@ -1,22 +1,24 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from infrastructure.repositories.product_repository_Impl import ProductRepositoryImpl
 from infrastructure.database.connection import get_db
 from src.api.schemas.product_admin_schema import ProductApproveRequest
 from common_auth.dependencies import get_current_user
+from src.utils.exceptions import UnauthorizedError, ProductNotFoundError
 
 router = APIRouter()
 
-def get_repo(db = Depends(get_db)):
+def get_repo(db=Depends(get_db)):
     return ProductRepositoryImpl(db)
+
 
 @router.get("/low-stock")
 def low_stock(
     threshold: int = Query(5, ge=0),
-    user = Depends(get_current_user),
+    user=Depends(get_current_user),
     repo: ProductRepositoryImpl = Depends(get_repo)
 ):
     if user.get("role") != "admin":
-        raise HTTPException(status_code=403, detail="Admin only")
+        raise UnauthorizedError("Admin only")
 
     products = repo.list_low_stock(threshold)
     return [
@@ -28,18 +30,19 @@ def low_stock(
         for p in products
     ]
 
+
 @router.post("/approve")
 def approve_product(
     payload: ProductApproveRequest,
-    user = Depends(get_current_user),
+    user=Depends(get_current_user),
     repo: ProductRepositoryImpl = Depends(get_repo)
 ):
     if user.get("role") != "admin":
-        raise HTTPException(status_code=403, detail="Admin only")
+        raise UnauthorizedError("Admin only")
 
     product = repo.get(payload.product_id)
     if not product:
-        raise HTTPException(404, "Product not found")
+        raise ProductNotFoundError(f"Product with ID {payload.product_id} not found")
 
     product.is_active = payload.approve
     repo.save(product)
@@ -50,4 +53,3 @@ def approve_product(
         "stock": product.stock,
         "is_active": product.is_active
     }
-

@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 
-# Add the src directory to Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
 import uvicorn
@@ -12,6 +11,10 @@ from contextlib import asynccontextmanager
 from src.infrastructure.database.connection import engine, Base
 from src.api.routes import auth_routes, user_routes
 from src.utils.logger import setup_logger
+from src.utils.middleware.correlation import CorrelationIdMiddleware
+from src.utils.middleware.exception import ExceptionMiddleware
+from src.utils.middleware.rate_limiter import RateLimitMiddleware
+
 
 logger = setup_logger(__name__)
 
@@ -32,13 +35,17 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+app.add_middleware(ExceptionMiddleware)
+app.add_middleware(CorrelationIdMiddleware)
+app.add_middleware(RateLimitMiddleware, max_requests=100, window_seconds=60)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 app.include_router(auth_routes.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(user_routes.router, prefix="/api/v1/users", tags=["Users"])

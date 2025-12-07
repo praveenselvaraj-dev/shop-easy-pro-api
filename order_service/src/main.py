@@ -11,7 +11,9 @@ from contextlib import asynccontextmanager
 from src.infrastructure.database.connection import engine, Base
 from src.api.routes import order_routes,order_admin_route
 from src.utils.logger import setup_logger
-
+from src.utils.middleware.correlation import CorrelationIdMiddleware
+from src.utils.middleware.exception import ExceptionMiddleware
+from src.utils.middleware.rate_limiter import RateLimitMiddleware
 logger = setup_logger(__name__)
 
 @asynccontextmanager
@@ -23,12 +25,17 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down Order Service...")
     engine.dispose()
 
+
+
 app = FastAPI(
     title="Order Service",
     description="Microservice for Order management",
     version="1.0.0",
     lifespan=lifespan
 )
+app.add_middleware(ExceptionMiddleware)
+app.add_middleware(CorrelationIdMiddleware)
+app.add_middleware(RateLimitMiddleware, max_requests=100, window_seconds=60)
 
 app.add_middleware(
     CORSMiddleware,

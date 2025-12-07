@@ -27,10 +27,10 @@ def get_user(
     user_service: UserService = Depends(get_user_service),
     current_user = Depends(get_current_user)
 ):
-    try:
+    # try:
         return user_service.get_user_by_id(user_id)
-    except UserNotFoundError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    # except UserNotFoundError as e:
+        # raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 @router.put("/{user_id}", response_model=UserResponse)
 def update_user(

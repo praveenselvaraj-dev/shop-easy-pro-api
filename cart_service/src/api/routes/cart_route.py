@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends
 from common_auth.dependencies import get_current_user, get_raw_token
 from api.schemas.cart_schema import AddToCartRequest, UpdateCartRequest, CartResponse, CartItemResponse
 from domain.services.cart_service import CartService
 from infrastructure.repositories.cart_repository_Impl import CartRepositoryImpl
 from infrastructure.database.connection import get_db
-from utils.exceptions import NotEnoughStock, ProductNotFound, CartItemNotFound
+from utils.exceptions import (
+    ProductNotFoundError, NotEnoughStockError, CartItemNotFoundError, ForbiddenError
+)
 
 from infrastructure.cache.redis_client import cache_get, cache_set, cache_delete
 
@@ -12,43 +14,20 @@ router = APIRouter()
 PRODUCT_SERVICE_URL = "http://127.0.0.1:8001/api/v1/Product"
 
 
-print(__name__)
-
-
-
 def get_service(db=Depends(get_db)):
     return CartService(CartRepositoryImpl(db))
 
 
-
 @router.get("/", response_model=CartResponse)
-def get_cart(
-    user=Depends(get_current_user),
-    token=Depends(get_raw_token),
-    service=Depends(get_service),
-):
-    
-
+def get_cart(user=Depends(get_current_user), token=Depends(get_raw_token), service=Depends(get_service)):
     user_id = user["sub"]
-    cache_key = f"cart:{user_id}"
-
-    cached = cache_get(cache_key)
-    if cached:
-        return cached
-    
-
     items = service.get_cart(user_id)
     response_items = []
 
     for i in items:
         product = service.fetch_product_details(i.product_id, token)
-        
         if not product:
-            raise HTTPException(
-            status_code=404,
-            detail=f"Product {i.product_id} not found"
-            )
-        
+            raise ProductNotFoundError(f"Product {i.product_id} not found")
 
         response_items.append({
             "id": i.id,
@@ -59,29 +38,22 @@ def get_cart(
             "name": product["name"],
             "image": product["image"]
         })
-    response_data = {
+
+    return {
         "items": response_items,
         "total": sum(i.price * i.quantity for i in items)
     }
 
-    cache_set(cache_key, response_data, ttl=60)
-    return response_data
-
 
 @router.post("/", response_model=CartItemResponse)
-def add_to_cart(
-    request: AddToCartRequest,
-    user=Depends(get_current_user),
-    token=Depends(get_raw_token),
-    service=Depends(get_service),
-):
+def add_to_cart(request: AddToCartRequest, user=Depends(get_current_user), token=Depends(get_raw_token), service=Depends(get_service)):
     user_id = user["sub"]
-    
-    item = service.add_to_cart(user["sub"], request.product_id, request.quantity, token)
+    item = service.add_to_cart(user_id, request.product_id, request.quantity, token)
+
     product = service.fetch_product_details(item.product_id, token)
-    
-    cache_delete(f"cart:{user_id}")
-    
+    if not product:
+        raise ProductNotFoundError(f"Product {item.product_id} not found")
+
     return {
         "id": item.id,
         "product_id": item.product_id,
@@ -94,57 +66,35 @@ def add_to_cart(
 
 
 @router.put("/{item_id}")
-def update_quantity(
-    item_id: str,
-    request: UpdateCartRequest,
-    user=Depends(get_current_user),
-    token=Depends(get_raw_token),
-    service=Depends(get_service)
-):
-    user_id = user["sub"]
-
+def update_quantity(item_id: str, request: UpdateCartRequest, user=Depends(get_current_user), token=Depends(get_raw_token), service=Depends(get_service)):
     item = service.update_quantity(item_id, request.quantity, user["sub"], token)
-    product = service.fetch_product_details(item.product_id, token)
+    if not item:
+        raise CartItemNotFoundError(f"Cart item {item_id} not found")
 
-    cache_delete(f"cart:{user_id}")
+    product = service.fetch_product_details(item.product_id, token)
+    if not product:
+        raise ProductNotFoundError(f"Product {item.product_id} not found")
+
     return {
         "id": item.id,
         "product_id": item.product_id,
         "quantity": item.quantity,
         "price": item.price,
-        "total": item.quantity * item.price,
+        "total": item.price * item.quantity,
         "name": product["name"],
         "image": product["image"]
     }
 
 
 @router.delete("/{item_id}")
-def remove_item(
-    item_id: str,
-    user=Depends(get_current_user),
-    token=Depends(get_raw_token),
-    service=Depends(get_service)
-):  
-    user_id = user["sub"]
-
-    service.delete_item(item_id, user["sub"], token)
-
-    cache_delete(f"cart:{user_id}")
-
+def remove_item(item_id: str, user=Depends(get_current_user), token=Depends(get_raw_token), service=Depends(get_service)):
+    success = service.delete_item(item_id, user["sub"], token)
+    if not success:
+        raise CartItemNotFoundError(f"Cart item {item_id} not found")
     return {"message": "Item removed successfully"}
 
 
 @router.delete("/")
-def clear_cart(
-    user=Depends(get_current_user),
-    token=Depends(get_raw_token),
-    service=Depends(get_service)
-):  
-    user_id = user["sub"]
-
+def clear_cart(user=Depends(get_current_user), token=Depends(get_raw_token), service=Depends(get_service)):
     service.clear_cart(user["sub"], token)
-
-    cache_delete(f"cart:{user_id}")
-    
     return {"message": "Cart cleared successfully"}
-

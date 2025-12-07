@@ -1,6 +1,6 @@
 import requests
 from domain.interface.cart_repository import CartRepository
-from utils.exceptions import NotEnoughStock, ProductNotFound, CartItemNotFound
+from utils.exceptions import NotEnoughStockError, ProductNotFoundError, CartItemNotFoundError
 from fastapi import HTTPException
 
 PRODUCT_SERVICE_URL = "http://127.0.0.1:8001/api/v1/Product"
@@ -22,7 +22,7 @@ class CartService:
         res = requests.get(url, headers=headers)
 
         if res.status_code == 404:
-            raise ProductNotFound("Product not found")
+            raise ProductNotFoundError("Product not found")
 
         if res.status_code == 403:
             raise HTTPException(403, "Unauthorized to access product service")
@@ -62,7 +62,7 @@ class CartService:
         product = self.fetch_product_price(product_id, token)
 
         if not product:
-            raise ProductNotFound("Product not found")
+            raise ProductNotFoundError("Product not found")
 
         price = product["price"]
 
@@ -71,13 +71,13 @@ class CartService:
         if existing:
             diff = quantity
             if not self.reserve_stock(product_id, diff, token):
-                raise NotEnoughStock("Not enough stock")
+                raise NotEnoughStockError("Not enough stock")
 
             return self.repo.update_item(existing.id, existing.quantity + quantity)
 
         
         if not self.reserve_stock(product_id, quantity, token):
-            raise NotEnoughStock("Not enough stock")
+            raise NotEnoughStockError("Not enough stock")
 
         return self.repo.add_item(user_id, product_id, quantity, price)
 
@@ -85,13 +85,13 @@ class CartService:
         item = self.repo.get_item_by_id(item_id)
 
         if not item or item.user_id != user_id:
-            raise CartItemNotFound("Item not found")
+            raise CartItemNotFoundError("Item not found")
 
         diff = quantity - item.quantity
 
         if diff > 0:
             if not self.reserve_stock(item.product_id, diff, token):
-                raise NotEnoughStock("Not enough stock")
+                raise NotEnoughStockError("Not enough stock")
         elif diff < 0:
             self.restore_stock(item.product_id, abs(diff), token)
 
