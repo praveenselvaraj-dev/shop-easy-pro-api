@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 class Settings(BaseSettings):
-    DATABASE_URL: str 
+    DATABASE_URL: str = "postgresql+psycopg2://shop_easy_pro_db_user:al7fabxsrIUrh5sy38zvfsBm6oJHicOq@dpg-d4qm2p3uibrs739kjvc0-a.oregon-postgres.render.com/shop_easy_pro_db"
     
     
     JWT_SECRET_KEY: str = "supersecret123"

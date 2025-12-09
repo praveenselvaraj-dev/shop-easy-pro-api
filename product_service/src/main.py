@@ -3,6 +3,9 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[2]   # <-- very important
 sys.path.append(str(ROOT_DIR))
+
+BASE_DIR = Path(__file__).resolve().parents[1]  # goes from src → product_service
+UPLOAD_DIR = BASE_DIR / "uploads"  
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -41,7 +44,8 @@ app.add_middleware(RateLimitMiddleware, max_requests=100, window_seconds=60)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://shop-easy-pro.vercel.app"],  
+    # allow_origins=["http://localhost:5173"],  
+    allow_origins=["https://shop-easy-pro.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -49,4 +53,8 @@ app.add_middleware(
 
 app.include_router(product_routes.router, prefix="/api/v1/Product", tags=["Products"])
 app.include_router(product_admin_route.router, prefix="/api/v1/admin/Product", tags=["Product admin"])
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+app.mount(
+    "/uploads",
+    StaticFiles(directory=str(UPLOAD_DIR)),
+    name="uploads"
+)
